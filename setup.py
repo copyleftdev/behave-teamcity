@@ -1,7 +1,7 @@
 from distutils.core import setup
 
 setup(
-    name='behave-teamcity',
+    name='hudl_behave-teamcity',
     version="0.1.24",
     packages=['hudl_behave_teamcity', ],
     url='https://github.com/hudl/behave-teamcity',
