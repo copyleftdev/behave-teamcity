@@ -1,9 +1,9 @@
 from setuptools import setup
 
 setup(
-    name='hudl_behave-teamcity',
+    name='hudl-behave-teamcity',
     version="0.1.24",
-    packages=['hudl_behave_teamcity'],
+    packages=['hudl-behave-teamcity'],
     url='https://github.com/hudl/behave-teamcity',
     author='Ilja Bauer',
     author_email='i.bauer@cuescience.de',
