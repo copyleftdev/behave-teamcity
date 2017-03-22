@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='hudl_behave_teamcity',
-    version="0.1.27",
+    version="0.1.28",
     packages=['hudl_behave_teamcity'],
     url='https://github.com/hudl/behave-teamcity',
     author='Ilja Bauer',
