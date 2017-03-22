@@ -36,8 +36,8 @@ class TeamcityFormatter(Formatter):
             return
 
         if self.current_scenario.status == "passed":
-            self.msg.message('testFinished', name=self.current_scenario.name + " OUTCOME + FILENAME",
-                             duration=str(self.current_scenario.duration), outcome=self.current_scenario.status, filename=self.current_scenario.filename, flowId=None)
+            self.msg.message('testFinished', name=self.current_scenario.name + " Filename = scenario",
+                             duration=str(self.current_scenario.duration), outcome=self.current_scenario.status, filename=self.current_scenario, flowId=None)
 
         if self.current_scenario.status == "failed":
             name = self.current_step.name
@@ -54,8 +54,8 @@ class TeamcityFormatter(Formatter):
             error_details = step_result.error_message
 
             self.msg.testFailed(self.current_scenario.name, message=error_msg, details=error_details)
-            self.msg.message('testFinished', name=self.current_scenario.name + " OUTCOME + FILENAME",
-                             duration=str(self.current_scenario.duration), outcome=self.current_scenario.status, filename=self.current_scenario.filename, flowId=None)
+            self.msg.message('testFinished', name=self.current_scenario.name + " Filename = scenario",
+                             duration=str(self.current_scenario.duration), outcome=self.current_scenario.status, filename=self.current_scenario, flowId=None)
 
     def eof(self):
         self.msg.testSuiteFinished(self.current_feature.name)
