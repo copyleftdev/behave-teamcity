@@ -2,6 +2,7 @@
 from behave.formatter.base import Formatter
 from behave.model_describe import ModelDescriptor
 from teamcity import messages
+import os
 
 
 class TeamcityFormatter(Formatter):
@@ -35,9 +36,11 @@ class TeamcityFormatter(Formatter):
         if self.current_scenario.status == "untested":
             return
 
+        current_path = os.path.dirname(os.path.realpath(__file__))
+
         if self.current_scenario.status == "passed":
-            self.msg.message('testFinished', name=self.current_scenario.name + " Filename = scenario",
-                             duration=str(self.current_scenario.duration), outcome=self.current_scenario.status, filename=str(self.current_scenario), flowId=None)
+            self.msg.message('testFinished', name=self.current_scenario.name,
+                             duration=str(self.current_scenario.duration), outcome=self.current_scenario.status, filename=current_path, flowId=None)
 
         if self.current_scenario.status == "failed":
             name = self.current_step.name
@@ -54,8 +57,8 @@ class TeamcityFormatter(Formatter):
             error_details = step_result.error_message
 
             self.msg.testFailed(self.current_scenario.name, message=error_msg, details=error_details)
-            self.msg.message('testFinished', name=self.current_scenario.name + " Filename = scenario",
-                             duration=str(self.current_scenario.duration), outcome=self.current_scenario.status, filename=str(self.current_scenario), flowId=None)
+            self.msg.message('testFinished', name=self.current_scenario.name,
+                             duration=str(self.current_scenario.duration), outcome=self.current_scenario.status, filename=current_path, flowId=None)
 
     def eof(self):
         self.msg.testSuiteFinished(self.current_feature.name)
