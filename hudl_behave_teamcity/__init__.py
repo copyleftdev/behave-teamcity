@@ -36,8 +36,8 @@ class TeamcityFormatter(Formatter):
             return
 
         if self.current_scenario.status == "passed":
-            self.msg.message('testFinished', name=self.current_scenario.name + " ------Antioch_API",
-                             duration=str(self.current_scenario.duration), outcome=self.current_scenario.status, flowId=None)
+            self.msg.message('testFinished', name=self.current_scenario.name,
+                             duration=str(self.current_scenario.duration), filename=self.current_scenario.filename, outcome=self.current_scenario.status, flowId=None)
 
         if self.current_scenario.status == "failed":
             name = self.current_step.name
@@ -55,7 +55,7 @@ class TeamcityFormatter(Formatter):
 
             self.msg.testFailed(self.current_scenario.name, message=error_msg, details=error_details)
             self.msg.message('testFinished', name=self.current_scenario.name + " ------Antioch_API",
-                             duration=str(self.current_scenario.duration), outcome=self.current_scenario.status, flowId=None)
+                             duration=str(self.current_scenario.duration), filename=self.current_scenario.filename, outcome=self.current_scenario.status, flowId=None)
 
     def eof(self):
         self.msg.testSuiteFinished(self.current_feature.name)
