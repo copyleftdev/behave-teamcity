@@ -3,6 +3,7 @@ from behave.formatter.base import Formatter
 from behave.model_describe import ModelDescriptor
 from teamcity import messages
 import os
+import time
 
 
 class TeamcityFormatter(Formatter):
@@ -14,6 +15,7 @@ class TeamcityFormatter(Formatter):
         self.current_scenario = None
         self.current_step = None
         self.msg = messages.TeamcityServiceMessages()
+        self.flow_id = "Build" + time.time()
 
     def feature(self, feature):
         self.current_feature = feature
@@ -38,7 +40,7 @@ class TeamcityFormatter(Formatter):
 
         if self.current_scenario.status == "passed":
             self.msg.message('testFinished', name=self.current_scenario.name,
-                             duration=str(self.current_scenario.duration), outcome=self.current_scenario.status, framework="Antioch_API", flowId=None)
+                             duration=str(self.current_scenario.duration), outcome=self.current_scenario.status, framework="Antioch_API", flowId=self.flow_id)
 
         if self.current_scenario.status == "failed":
             name = self.current_step.name
@@ -56,7 +58,7 @@ class TeamcityFormatter(Formatter):
 
             self.msg.testFailed(self.current_scenario.name, message=error_msg, details=error_details)
             self.msg.message('testFinished', name=self.current_scenario.name,
-                             duration=str(self.current_scenario.duration), outcome=self.current_scenario.status, framework="Antioch_API", flowId=None)
+                             duration=str(self.current_scenario.duration), outcome=self.current_scenario.status, framework="Antioch_API", flowId=self.flow_id)
 
     def eof(self):
         self.msg.testSuiteFinished(self.current_feature.name)
