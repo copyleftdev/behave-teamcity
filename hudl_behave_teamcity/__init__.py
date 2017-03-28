@@ -15,7 +15,7 @@ class TeamcityFormatter(Formatter):
         self.current_scenario = None
         self.current_step = None
         self.msg = messages.TeamcityServiceMessages()
-        self.flow_id = "Build" + time.time()
+        self.flow_id = "Build" + str(time.time())
 
     def feature(self, feature):
         self.current_feature = feature
