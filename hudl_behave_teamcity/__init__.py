@@ -4,6 +4,41 @@ from behave.model_describe import ModelDescriptor
 from teamcity import messages
 import os
 import time
+import behave.reporter.summary
+
+def teamcity_format_summary(statement_type, summary):
+    optional_steps = ('untested',)
+    parts = []
+    tc_parts = []
+    tc_log_format = "##teamcity[setParameter name='env.{}_{}' value='{}']\n"
+    for status in ('passed', 'failed', 'skipped', 'undefined', 'untested'):
+        if status not in summary:
+            continue
+        counts = summary[status]
+        if status in optional_steps and counts == 0:
+            # -- SHOW-ONLY: For relevant counts, suppress: untested items, etc.
+            continue
+
+        if not parts:
+            # -- FIRST ITEM: Add statement_type to counter.
+            label = statement_type
+            if counts != 1:
+                label += 's'
+            part = u'%d %s %s' % (counts, label, status) # e.g. 3 features passed
+        else:
+            part = u'%d %s' % (counts, status)
+        parts.append(part)
+        tc_parts.append(tc_log_format.format(label.upper(), status.upper(), counts))
+    
+    standard_behave_log =  ', '.join(parts) + '\n'
+    teamcity_log = ''.join(tc_parts)
+    return standard_behave_log + teamcity_log
+
+# This is disgusting. But it's better than the alternative, which is trying to decipher
+# Python's multiple inheritance in tandem with Behave's formatting options.
+# This is a 'monkey-patch', specifically of the format_summary method in Behave's summary.py
+# Because this formatter is only used on TeamCity runs, it won't affect local test runs.
+behave.reporter.summary.format_summary = teamcity_format_summary
 
 
 class TeamcityFormatter(Formatter):
