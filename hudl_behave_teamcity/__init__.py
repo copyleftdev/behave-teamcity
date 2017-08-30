@@ -28,7 +28,7 @@ def teamcity_format_summary(statement_type, summary):
         else:
             part = u'%d %s' % (counts, status)
         parts.append(part)
-        if !label.endswith('s'):
+        if not label.endswith('s'):
             label += 's'
         tc_parts.append(tc_log_format.format(label.upper(), status.upper(), counts))
     
