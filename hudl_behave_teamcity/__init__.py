@@ -72,6 +72,9 @@ class TeamcityFormatter(Formatter):
         self.current_step = step
 
     def result(self, step_result):
+        text = u'%6s %s ... ' % (step_result.keyword, step_result.name)
+        self.msg.progressMessage(text)
+        
         if self.current_scenario.status == "untested":
             return
 
@@ -80,7 +83,7 @@ class TeamcityFormatter(Formatter):
                              duration=str(self.current_scenario.duration), outcome=self.current_scenario.status, framework=os.environ['TEAMCITY_BUILDCONF_NAME'], service=os.environ['TEAMCITY_PROJECT_NAME'], environment=os.environ['SITE'], flowId=self.flow_id)
 
         if self.current_scenario.status == "failed":
-            name = self.current_step.name
+            name = step_result.name
 
             error_msg = u"Step failed: {}".format(name)
             if self.current_step.table:
