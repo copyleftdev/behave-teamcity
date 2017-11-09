@@ -101,4 +101,6 @@ class TeamcityFormatter(Formatter):
                              duration=str(self.current_scenario.duration), outcome=self.current_scenario.status, framework=os.environ['TEAMCITY_BUILDCONF_NAME'], service=os.environ['TEAMCITY_PROJECT_NAME'], environment=os.environ['SITE'], flowId=self.flow_id)
 
     def eof(self):
+        if self.current_scenario and self.current_scenario.status == "skipped":  # Check the last scenario in a feature, as scenario() won't
+            self.msg.testIgnored(self.current_scenario.name)
         self.msg.testSuiteFinished(self.current_feature.name)
