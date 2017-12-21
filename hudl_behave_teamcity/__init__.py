@@ -31,7 +31,7 @@ def teamcity_format_summary(statement_type, summary):
         if not label.endswith('s'):
             label += 's'
         tc_parts.append(tc_log_format.format(label.upper(), status.upper(), counts))
-    
+
     standard_behave_log =  ', '.join(parts) + '\n'
     teamcity_log = ''.join(tc_parts)
     return standard_behave_log + teamcity_log
@@ -58,34 +58,34 @@ class TeamcityFormatter(Formatter):
         self.current_feature = feature
         self.current_scenario = None
         self.current_step = None
-        self.msg.testSuiteStarted(self.current_feature.name)
+        self.msg.testSuiteStarted(self.current_feature.name.encode(encoding='ascii', errors='replace'))
 
     def scenario(self, scenario):
         if self.current_scenario and self.current_scenario.status == "skipped":
-            self.msg.testIgnored(self.current_scenario.name)
+            self.msg.testIgnored(self.current_scenario.name.encode(encoding='ascii', errors='replace'))
 
         self.current_scenario = scenario
         self.current_step = None
-        self.msg.testStarted(self.current_scenario.name, captureStandardOutput='false')
+        self.msg.testStarted(self.current_scenario.name.encode(encoding='ascii', errors='replace'), captureStandardOutput='false')
 
     def step(self, step):
         self.current_step = step
 
     def result(self, step_result):
         text = u'%6s %s ... ' % (step_result.keyword, step_result.name)
-        self.msg.progressMessage(text)
-        
+        self.msg.progressMessage(text.encode(encoding='ascii', errors='replace'))
+
         if self.current_scenario.status == "untested":
             return
 
         if self.current_scenario.status == "passed":
-            self.msg.message('testFinished', name=self.current_scenario.name,
+            self.msg.message('testFinished', name=self.current_scenario.name.encode(encoding='ascii', errors='replace'),
                              duration=str(self.current_scenario.duration), outcome=self.current_scenario.status, framework=os.environ['TEAMCITY_BUILDCONF_NAME'], service=os.environ['TEAMCITY_PROJECT_NAME'], environment=os.environ['SITE'], flowId=self.flow_id)
 
         if self.current_scenario.status == "failed":
             name = step_result.name
 
-            error_msg = u"Step failed: {}".format(name)
+            error_msg = u"Step failed: {}".format(name.encode(encoding='ascii', errors='replace'))
             if self.current_step.table:
                 table = ModelDescriptor.describe_table(self.current_step.table, None)
                 error_msg = u"{}\nTable:\n{}".format(error_msg, table)
@@ -96,11 +96,11 @@ class TeamcityFormatter(Formatter):
 
             error_details = step_result.error_message
 
-            self.msg.testFailed(self.current_scenario.name, message=error_msg, details=error_details)
-            self.msg.message('testFinished', name=self.current_scenario.name,
+            self.msg.testFailed(self.current_scenario.name.encode(encoding='ascii', errors='replace'), message=error_msg, details=error_details)
+            self.msg.message('testFinished', name=self.current_scenario.name.encode(encoding='ascii', errors='replace'),
                              duration=str(self.current_scenario.duration), outcome=self.current_scenario.status, framework=os.environ['TEAMCITY_BUILDCONF_NAME'], service=os.environ['TEAMCITY_PROJECT_NAME'], environment=os.environ['SITE'], flowId=self.flow_id)
 
     def eof(self):
         if self.current_scenario and self.current_scenario.status == "skipped":  # Check the last scenario in a feature, as scenario() won't
-            self.msg.testIgnored(self.current_scenario.name)
-        self.msg.testSuiteFinished(self.current_feature.name)
+            self.msg.testIgnored(self.current_scenario.name.encode(encoding='ascii', errors='replace'))
+        self.msg.testSuiteFinished(self.current_feature.name.encode(encoding='ascii', errors='replace'))
