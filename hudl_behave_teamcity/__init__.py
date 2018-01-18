@@ -78,11 +78,16 @@ class TeamcityFormatter(Formatter):
         if self.current_scenario.status == "untested":
             return
 
-        if self.current_scenario.status == "passed":
-            self.msg.message('testFinished', name=self.current_scenario.name.encode(encoding='ascii', errors='replace'),
-                             duration=str(self.current_scenario.duration), outcome=self.current_scenario.status, framework=os.environ['TEAMCITY_BUILDCONF_NAME'], service=os.environ['TEAMCITY_PROJECT_NAME'], environment=os.environ['SITE'], flowId=self.flow_id)
+        status = self.current_scenario.status
+        if type(self.current_scenario.status) is not str:
+            # Behave 1.2.6 (not released yet) converts status into an enum, but we need to be backwards-compatible
+            status = status.name
 
-        if self.current_scenario.status == "failed":
+        if status == "passed":
+            self.msg.message('testFinished', name=self.current_scenario.name.encode(encoding='ascii', errors='replace'),
+                             duration=str(self.current_scenario.duration), outcome=str(status), framework=os.environ['TEAMCITY_BUILDCONF_NAME'], service=os.environ['TEAMCITY_PROJECT_NAME'], environment=os.environ['SITE'], flowId=self.flow_id)
+
+        if status == "failed":
             name = step_result.name
 
             error_msg = u"Step failed: {}".format(name.encode(encoding='ascii', errors='replace'))
@@ -98,7 +103,7 @@ class TeamcityFormatter(Formatter):
 
             self.msg.testFailed(self.current_scenario.name.encode(encoding='ascii', errors='replace'), message=error_msg, details=error_details)
             self.msg.message('testFinished', name=self.current_scenario.name.encode(encoding='ascii', errors='replace'),
-                             duration=str(self.current_scenario.duration), outcome=self.current_scenario.status, framework=os.environ['TEAMCITY_BUILDCONF_NAME'], service=os.environ['TEAMCITY_PROJECT_NAME'], environment=os.environ['SITE'], flowId=self.flow_id)
+                             duration=str(self.current_scenario.duration), outcome=str(status), framework=os.environ['TEAMCITY_BUILDCONF_NAME'], service=os.environ['TEAMCITY_PROJECT_NAME'], environment=os.environ['SITE'], flowId=self.flow_id)
 
     def eof(self):
         if self.current_scenario and self.current_scenario.status == "skipped":  # Check the last scenario in a feature, as scenario() won't
