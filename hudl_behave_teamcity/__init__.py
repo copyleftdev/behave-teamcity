@@ -93,9 +93,9 @@ class TeamcityFormatter(Formatter):
 
             if self.current_step.text:
                 text = ModelDescriptor.describe_docstring(self.current_step.text, None)
-                error_msg = u"{}\nText:\n{}".format(error_msg, text)
+                error_msg = u"{}\nText:\n{}".format(error_msg, text).encode(encoding='ascii', errors='replace')
 
-            error_details = step_result.error_message
+            error_details = step_result.error_message.encode(encoding='ascii', errors='replace')
 
             self.msg.testFailed(self.current_scenario.name.encode(encoding='ascii', errors='replace'), message=error_msg, details=error_details)
 
