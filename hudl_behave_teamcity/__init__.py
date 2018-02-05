@@ -6,8 +6,9 @@ import os
 import time
 import behave.reporter.summary
 
+
 def teamcity_format_summary(statement_type, summary):
-    optional_steps = ('untested',)
+    optional_steps = ('untested', )
     parts = []
     tc_parts = []
     tc_log_format = "##teamcity[setParameter name='env.{}_{}' value='{}']\n"
@@ -24,7 +25,7 @@ def teamcity_format_summary(statement_type, summary):
             label = statement_type
             if counts != 1:
                 label += 's'
-            part = u'%d %s %s' % (counts, label, status) # e.g. 3 features passed
+            part = u'%d %s %s' % (counts, label, status)  # e.g. 3 features passed
         else:
             part = u'%d %s' % (counts, status)
         parts.append(part)
@@ -32,9 +33,10 @@ def teamcity_format_summary(statement_type, summary):
             label += 's'
         tc_parts.append(tc_log_format.format(label.upper(), status.upper(), counts))
 
-    standard_behave_log =  ', '.join(parts) + '\n'
+    standard_behave_log = ', '.join(parts) + '\n'
     teamcity_log = ''.join(tc_parts)
     return standard_behave_log + teamcity_log
+
 
 # This is disgusting. But it's better than the alternative, which is trying to decipher
 # Python's multiple inheritance in tandem with Behave's formatting options.
@@ -66,7 +68,8 @@ class TeamcityFormatter(Formatter):
 
         self.current_scenario = scenario
         self.current_step = None
-        self.msg.testStarted(self.current_scenario.name.encode(encoding='ascii', errors='replace'), captureStandardOutput='false')
+        self.msg.testStarted(
+            self.current_scenario.name.encode(encoding='ascii', errors='replace'), captureStandardOutput='false')
 
     def step(self, step):
         self.current_step = step
@@ -97,10 +100,20 @@ class TeamcityFormatter(Formatter):
 
             error_details = step_result.error_message.encode(encoding='ascii', errors='replace')
 
-            self.msg.testFailed(self.current_scenario.name.encode(encoding='ascii', errors='replace'), message=error_msg, details=error_details)
+            self.msg.testFailed(
+                self.current_scenario.name.encode(encoding='ascii', errors='replace'),
+                message=error_msg,
+                details=error_details)
 
-        self.msg.message('testFinished', name=self.current_scenario.name.encode(encoding='ascii', errors='replace'),
-                         duration=str(self.current_scenario.duration), outcome=status, framework=os.environ['TEAMCITY_BUILDCONF_NAME'], service=os.environ['TEAMCITY_PROJECT_NAME'], environment=os.environ['SITE'], flowId=self.flow_id)
+        self.msg.message(
+            'testFinished',
+            name=self.current_scenario.name.encode(encoding='ascii', errors='replace'),
+            duration=str(self.current_scenario.duration),
+            outcome=status,
+            framework=os.environ['TEAMCITY_BUILDCONF_NAME'],
+            service=os.environ['TEAMCITY_PROJECT_NAME'],
+            environment=os.environ['SITE'],
+            flowId=self.flow_id)
 
     def eof(self):
         if self.current_scenario and self.current_scenario.status == "skipped":  # Check the last scenario in a feature, as scenario() won't
