@@ -5,6 +5,10 @@ __pycache__/
 # C extensions
 *.so
 
+
+# Pipenv Files
+Pipfile
+Pipfile.lock
 # Distribution / packaging
 .Python
 env/
